@@ -31,7 +31,7 @@ const ContactValidationSchema = Yup.object().shape({
       const FILE_SIZE = 1024 * 1024; // 1 MB in bytes
       return fileSizeInByte <= FILE_SIZE;
     }),
-  recaptcha: Yup.string().required("Please verify that you are not a robot"),
+  recaptcha: Yup.string(), //.required("Please verify that you are not a robot"),
 });
 
 export default ContactValidationSchema;

@@ -8,7 +8,7 @@ import { useForm, useController } from "react-hook-form";
 import UserAddress from "./UserAddress";
 import { useEffect, useRef, useState } from "react";
 import Select from "react-select";
-import ReCAPTCHA from "react-google-recaptcha";
+//import ReCAPTCHA from "react-google-recaptcha";
 
 interface ContactUsProps extends CommonProps {}
 
@@ -83,14 +83,14 @@ const ContactUs: NextPage<ContactUsProps> = (props) => {
     tags.onChange(option.map((x: any) => x.value));
   };
 
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  // const recaptchaRef = useRef<ReCAPTCHA>(null);
 
-  const resetCaptcha = () => {
-    if (recaptchaRef.current) {
-      recaptchaRef.current.reset();
-      setValue("recaptcha", "");
-    }
-  };
+  // const resetCaptcha = () => {
+  //   if (recaptchaRef.current) {
+  //     recaptchaRef.current.reset();
+  //     setValue("recaptcha", "");
+  //   }
+  // };
 
   return (
     <div>
@@ -217,7 +217,7 @@ const ContactUs: NextPage<ContactUsProps> = (props) => {
               )}
             </Form.Group>
 
-            <Form.Group className="mt-3">
+            {/* <Form.Group className="mt-3">
               <ReCAPTCHA
                 ref={recaptchaRef}
                 sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
@@ -238,7 +238,7 @@ const ContactUs: NextPage<ContactUsProps> = (props) => {
               >
                 Reset Captcha
               </button>
-            </Form.Group>
+            </Form.Group> */}
           </Card.Body>
         </Card>
 
