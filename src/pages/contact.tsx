@@ -5,7 +5,7 @@ export default function Contact() {
   return (
     <>
       <Head>
-        <title>Contact Us</title>
+        <title>Dynamic Form Example</title>
       </Head>
 
       <div className="container mt-5">
