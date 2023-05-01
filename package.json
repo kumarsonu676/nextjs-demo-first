@@ -1,4 +1,5 @@
 {
+  "homepage": "https://kumarsonu676.github.io/nextjs-demo-first",
   "name": "demo-one",
   "version": "0.1.0",
   "private": true,
@@ -6,7 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.0",
@@ -25,5 +28,8 @@
     "react-select": "^5.7.2",
     "typescript": "5.0.4",
     "yup": "^1.1.1"
+  },
+  "devDependencies": {
+    "gh-pages": "^5.0.0"
   }
 }
