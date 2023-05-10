@@ -3,13 +3,6 @@ import * as Yup from "yup";
 const ContactValidationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   email: Yup.string().required("Email is required"),
-  address: Yup.array().of(
-    Yup.object().shape({
-      addressLine1: Yup.string().required("Address line 1 is required"),
-      addressLine2: Yup.string(),
-      city: Yup.string().required("City is required"),
-    })
-  ),
   countryId: Yup.number().required("Country is required"),
   //tags: Yup.string().required("Tag is required"),
   tags: Yup.array().of(Yup.string()).min(1, "Please select at least one tag"),
@@ -32,6 +25,21 @@ const ContactValidationSchema = Yup.object().shape({
       return fileSizeInByte <= FILE_SIZE;
     }),
   recaptcha: Yup.string(), //.required("Please verify that you are not a robot"),
+
+  address: Yup.array().of(
+    Yup.object().shape({
+      addressLine1: Yup.string().required("Address line 1 is required"),
+      addressLine2: Yup.string(),
+      countryId: Yup.number()
+        .required("Country is required")
+        .test("shouldNotBeZero", "Country is required", (value: number) => {
+          if (value <= 0) return false;
+          return true;
+        }),
+      stateId: Yup.string().required("State is required"),
+      city: Yup.string().required("City is required"),
+    })
+  ),
 });
 
 export default ContactValidationSchema;

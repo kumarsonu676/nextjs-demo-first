@@ -4,7 +4,7 @@ import ContactValidationSchema from "@/validation/ContactValidationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NextPage } from "next";
 import { Button, Card, FloatingLabel, Form } from "react-bootstrap";
-import { useForm, useController } from "react-hook-form";
+import { useForm, useController, Controller } from "react-hook-form";
 import UserAddress from "./UserAddress";
 import { useEffect, useRef, useState } from "react";
 import Select from "react-select";
@@ -14,16 +14,16 @@ interface ContactUsProps extends CommonProps {}
 
 const ContactUs: NextPage<ContactUsProps> = (props) => {
   const initialValues: AddressModel[] = [
-    { addressLine1: "", addressLine2: "", city: "" },
+    { addressLine1: "", addressLine2: "", city: "", countryId: 0, stateId: "" },
   ];
 
   const countryList = [
-    { value: 1, label: "India" },
-    { value: 2, label: "United States" },
-    { value: 3, label: "United Kindom" },
-    { value: 4, label: "France" },
-    { value: 5, label: "Brazil" },
-    { value: 6, label: "Italy" },
+    { id: 1, name: "India" },
+    { id: 2, name: "United States" },
+    { id: 3, name: "United Kindom" },
+    { id: 4, name: "France" },
+    { id: 5, name: "Brazil" },
+    { id: 6, name: "Italy" },
   ];
 
   const tagList = [
@@ -49,15 +49,6 @@ const ContactUs: NextPage<ContactUsProps> = (props) => {
     },
   });
 
-  const { field: countryId } = useController({
-    name: "countryId",
-    control,
-  });
-  const { field: tags } = useController({
-    name: "tags",
-    control,
-  });
-
   const submitData = async (formData: ContactModel) => {
     console.log("formData", formData);
   };
@@ -67,30 +58,6 @@ const ContactUs: NextPage<ContactUsProps> = (props) => {
     setValue("email", "kumarsonu676@gmail.com", { shouldValidate: true });
     setValue("countryId", 5);
   }, []);
-
-  const onCountryChange = (option: any) => {
-    countryId.onChange(option.value);
-  };
-
-  const [initialTag, setInitalTag] = useState(() => {
-    const initVal = tagList.filter((x) => x.selected === true);
-    tags.onChange(initVal.map((x) => x?.value));
-    return initVal;
-  });
-  const onTagChange = (option: any) => {
-    const newValue = option.map((x: any) => ({ ...x, selected: true }));
-    setInitalTag(newValue);
-    tags.onChange(option.map((x: any) => x.value));
-  };
-
-  // const recaptchaRef = useRef<ReCAPTCHA>(null);
-
-  // const resetCaptcha = () => {
-  //   if (recaptchaRef.current) {
-  //     recaptchaRef.current.reset();
-  //     setValue("recaptcha", "");
-  //   }
-  // };
 
   return (
     <div>
@@ -134,35 +101,54 @@ const ContactUs: NextPage<ContactUsProps> = (props) => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <label>Country</label>
-              <Select
-                className="form-control"
-                placeholder="Select country"
-                options={countryList}
-                isSearchable={true}
-                value={countryList.find((x) => x.value === countryId.value)}
-                onChange={onCountryChange}
-                instanceId="countryIds"
+              <Controller
+                control={control}
+                name="countryId"
+                render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                  <Select
+                    placeholder="Select Country"
+                    options={countryList}
+                    getOptionValue={(option) => `${option.id}`}
+                    getOptionLabel={(option) => `${option.name}`}
+                    instanceId={"countryId"}
+                    onChange={(option) => {
+                      onChange(option?.id);
+                    }}
+                    onBlur={onBlur}
+                    value={countryList.find((x) => x.id === value)}
+                    name={name}
+                    ref={ref}
+                  />
+                )}
               />
-
               {errors.countryId && (
                 <span className="text-danger">{errors.countryId.message}</span>
               )}
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <label>Tags</label>
-              <Select
-                className="form-control"
-                placeholder="Select tags"
-                options={tagList}
-                isSearchable={true}
-                isMulti={true}
-                value={initialTag}
-                onChange={onTagChange}
-                instanceId="tags"
+              <Controller
+                control={control}
+                name={`tags`}
+                render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                  <Select
+                    placeholder="Select tag(s)"
+                    options={tagList}
+                    instanceId={`tags`}
+                    onChange={(option) => {
+                      const selectedValues = option.map((x) => {
+                        return x.value;
+                      });
+                      onChange(selectedValues);
+                    }}
+                    isMulti={true}
+                    onBlur={onBlur}
+                    value={tagList.filter((x) => value?.includes(x.value))}
+                    name={name}
+                    ref={ref}
+                  />
+                )}
               />
-
               {errors.tags && (
                 <span className="text-danger">{errors.tags.message}</span>
               )}
@@ -216,33 +202,16 @@ const ContactUs: NextPage<ContactUsProps> = (props) => {
                 </span>
               )}
             </Form.Group>
-
-            {/* <Form.Group className="mt-3">
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                onChange={(value: string) =>
-                  setValue("recaptcha", value, { shouldValidate: true })
-                }
-              />
-              {errors.recaptcha && (
-                <span className="text-danger">{errors.recaptcha.message}</span>
-              )}
-
-              <br />
-              <br />
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={resetCaptcha}
-              >
-                Reset Captcha
-              </button>
-            </Form.Group> */}
           </Card.Body>
         </Card>
 
-        <UserAddress register={register} control={control} errors={errors} />
+        <UserAddress
+          register={register}
+          control={control}
+          errors={errors}
+          setValue={setValue}
+          getValues={getValues}
+        />
 
         <Form.Group className="mt-3 text-center">
           <Button variant="primary" type="submit" className="btn_main">

@@ -14,4 +14,6 @@ export interface AddressModel {
   addressLine1: string;
   addressLine2: string;
   city: string;
+  countryId: number;
+  stateId: string;
 }
